@@ -1,8 +1,8 @@
 {
-  "name": "graasp-repo",
+  "name": "graasp-hidden-item",
   "author": "Graasp Association",
   "version": "0.1.0",
-  "description": "Repository template for Graasp",
+  "description": "Hidden items plugin for Graasp",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -18,20 +18,25 @@
     "test:watch": "yarn test --watchAll",
     "lint": "eslint ."
   },
-  "repository": "git@github.com:graasp/graasp-repo.git",
+  "repository": "git@github.com:graasp/graasp-hidden-item.git",
   "license": "AGPL",
   "bugs": {
-    "url": "https://github.com/graasp/graasp-repo/issues"
+    "url": "https://github.com/graasp/graasp-hidden-item/issues"
   },
-  "homepage": "https://github.com/graasp/graasp-repo#readme",
+  "homepage": "https://github.com/graasp/graasp-hidden-item#readme",
+  "dependencies": {
+    "graasp-item-tags": "graasp/graasp-item-tags#11/taskManagerDbService"
+  },
   "devDependencies": {
     "@commitlint/cli": "^13.1.0",
     "@commitlint/config-conventional": "^13.1.0",
+    "@types/graasp": "github:graasp/graasp-types",
     "@types/jest": "27.0.1",
     "@typescript-eslint/eslint-plugin": "5.4.0",
     "@typescript-eslint/parser": "5.4.0",
     "eslint": "^7.13.0",
     "eslint-config-prettier": "^8.3.0",
+    "fastify": "3.25.0",
     "husky": "7.0.4",
     "jest": "27.3.0",
     "prettier": "2.5.1",
