@@ -1,5 +1,5 @@
 {
-  "name": "graasp-hidden-item",
+  "name": "graasp-plugin-hidden-items",
   "author": "Graasp Association",
   "version": "0.1.0",
   "description": "Hidden items plugin for Graasp",
@@ -18,12 +18,12 @@
     "test:watch": "yarn test --watchAll",
     "lint": "eslint ."
   },
-  "repository": "git@github.com:graasp/graasp-hidden-item.git",
+  "repository": "git@github.com:graasp/graasp-plugin-hidden-items.git",
   "license": "AGPL",
   "bugs": {
-    "url": "https://github.com/graasp/graasp-hidden-item/issues"
+    "url": "https://github.com/graasp/graasp-plugin-hidden-items/issues"
   },
-  "homepage": "https://github.com/graasp/graasp-hidden-item#readme",
+  "homepage": "https://github.com/graasp/graasp-plugin-hidden-items#readme",
   "dependencies": {
     "graasp-item-tags": "graasp/graasp-item-tags#11/taskManagerDbService"
   },
