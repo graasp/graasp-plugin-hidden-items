@@ -1,11 +1,5 @@
 import { FastifyLoggerInstance, FastifyPluginAsync } from 'fastify';
-import {
-  Actor,
-  Item,
-  Member,
-  PermissionLevel,
-  UnknownExtra,
-} from 'graasp';
+import { Actor, Item, Member, PermissionLevel, UnknownExtra } from 'graasp';
 import { ItemTagTaskManager, ItemTagService } from 'graasp-item-tags';
 
 export interface GraaspHiddenOptions {
@@ -45,19 +39,22 @@ const plugin: FastifyPluginAsync<GraaspHiddenOptions> = async (fastify, options)
     },
   );
 
-  runner.setTaskPostHookHandler<Item[]>(itemTaskManager.getGetOwnTaskName(), async (items, actor, { log }) => {
-    const filteredItems = await Promise.all(
-      items.map(async (item) => {
-        try {
-          await isItemHidden(item, actor, log);
-          return item;
-        } catch (err) {
-          return (null as unknown) as Item<UnknownExtra>;
-        }
-      }),
-    );
-    items.splice(0, items.length, ...filteredItems.filter(Boolean));
-  },);
+  runner.setTaskPostHookHandler<Item[]>(
+    itemTaskManager.getGetOwnTaskName(),
+    async (items, actor, { log }) => {
+      const filteredItems = await Promise.all(
+        items.map(async (item) => {
+          try {
+            await isItemHidden(item, actor, log);
+            return item;
+          } catch (err) {
+            return null as unknown as Item<UnknownExtra>;
+          }
+        }),
+      );
+      items.splice(0, items.length, ...filteredItems.filter(Boolean));
+    },
+  );
 
   runner.setTaskPostHookHandler<Item[]>(
     itemTaskManager.getGetSharedWithTaskName(),
@@ -68,7 +65,7 @@ const plugin: FastifyPluginAsync<GraaspHiddenOptions> = async (fastify, options)
             await isItemHidden(item, actor, log);
             return item;
           } catch (err) {
-            return (null as unknown) as Item<UnknownExtra>;
+            return null as unknown as Item<UnknownExtra>;
           }
         }),
       );
@@ -85,7 +82,7 @@ const plugin: FastifyPluginAsync<GraaspHiddenOptions> = async (fastify, options)
             await isItemHidden(item, actor, log);
             return item;
           } catch (err) {
-            return (null as unknown) as Item<UnknownExtra>;
+            return null as unknown as Item<UnknownExtra>;
           }
         }),
       );
