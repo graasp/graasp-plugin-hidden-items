@@ -1,5 +1,6 @@
-import { FastifyPluginAsync } from 'fastify';
+import { FastifyLoggerInstance, FastifyPluginAsync } from 'fastify';
 import {
+  Actor,
   Item,
   Member,
   PermissionLevel,
@@ -23,20 +24,24 @@ const plugin: FastifyPluginAsync<GraaspHiddenOptions> = async (fastify, options)
   const iTS = new ItemTagService();
   const taskManager = new ItemTagTaskManager(iS, iMS, iTS);
 
+  const isItemHidden = async (item: Item, actor: Actor, log: FastifyLoggerInstance) => {
+    const t1 = taskManager.createGetOfItemTask(actor as Member, item.id);
+    const tags = await runner.runSingle(t1, log);
+
+    // item is hidden
+    if (tags.filter(({ tagId }) => tagId === hiddenTagId).length > 0) {
+      const t2 = membershipTaskManager.createGetMemberItemMembershipTask(actor, {
+        item,
+        validatePermission: 'admin' as PermissionLevel,
+      });
+      await runner.runSingle(t2, log);
+    }
+  };
+
   runner.setTaskPostHookHandler<Item>(
     itemTaskManager.getGetTaskName(),
     async (item, actor, { log }) => {
-      const t1 = taskManager.createGetOfItemTask(actor as Member, item.id);
-      const tags = await runner.runSingle(t1, log);
-
-      // item is hidden
-      if (tags.filter(({ tagId }) => tagId === hiddenTagId).length > 0) {
-        const t2 = membershipTaskManager.createGetMemberItemMembershipTask(actor, {
-          item,
-          validatePermission: PermissionLevel.Admin,
-        });
-        await runner.runSingle(t2, log);
-      }
+      await isItemHidden(item, actor, log);
     },
   );
 
@@ -44,17 +49,7 @@ const plugin: FastifyPluginAsync<GraaspHiddenOptions> = async (fastify, options)
     const filteredItems = await Promise.all(
       items.map(async (item) => {
         try {
-          const t1 = taskManager.createGetOfItemTask(actor as Member, item.id);
-          const tags = await runner.runSingle(t1, log);
-
-          // item is hidden
-          if (tags.filter(({ tagId }) => tagId === hiddenTagId).length > 0) {
-            const t2 = membershipTaskManager.createGetMemberItemMembershipTask(actor, {
-              item,
-              validatePermission: PermissionLevel.Admin,
-            });
-            await runner.runSingle(t2, log);
-          }
+          await isItemHidden(item, actor, log);
           return item;
         } catch (err) {
           return (null as unknown) as Item<UnknownExtra>;
@@ -70,17 +65,7 @@ const plugin: FastifyPluginAsync<GraaspHiddenOptions> = async (fastify, options)
       const filteredItems = await Promise.all(
         items.map(async (item) => {
           try {
-            const t1 = taskManager.createGetOfItemTask(actor as Member, item.id);
-            const tags = await runner.runSingle(t1, log);
-
-            // item is hidden
-            if (tags.filter(({ tagId }) => tagId === hiddenTagId).length > 0) {
-              const t2 = membershipTaskManager.createGetMemberItemMembershipTask(actor, {
-                item,
-                validatePermission: PermissionLevel.Admin,
-              });
-              await runner.runSingle(t2, log);
-            }
+            await isItemHidden(item, actor, log);
             return item;
           } catch (err) {
             return (null as unknown) as Item<UnknownExtra>;
@@ -97,17 +82,7 @@ const plugin: FastifyPluginAsync<GraaspHiddenOptions> = async (fastify, options)
       const filteredItems = await Promise.all(
         items.map(async (item) => {
           try {
-            const t1 = taskManager.createGetOfItemTask(actor as Member, item.id);
-            const tags = await runner.runSingle(t1, log);
-
-            // item is hidden
-            if (tags.filter(({ tagId }) => tagId === hiddenTagId).length > 0) {
-              const t2 = membershipTaskManager.createGetMemberItemMembershipTask(actor, {
-                item,
-                validatePermission: PermissionLevel.Admin,
-              });
-              await runner.runSingle(t2, log);
-            }
+            await isItemHidden(item, actor, log);
             return item;
           } catch (err) {
             return (null as unknown) as Item<UnknownExtra>;
