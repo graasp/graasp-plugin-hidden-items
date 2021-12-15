@@ -2883,9 +2883,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graasp-hidden-item@workspace:.":
+"graasp-item-tags@graasp/graasp-item-tags#11/taskManagerDbService":
+  version: 0.1.0
+  resolution: "graasp-item-tags@https://github.com/graasp/graasp-item-tags.git#commit=92331ff108221f267822758b59bdb9c31a8d2c90"
+  checksum: 7718175ab0e3112835c2a2bb450bb988b4cba16e7f363bd8fe5ece7003790234c0da42de4fd525e99d74586fbb0d67d413079882e52c8995a2ea642e31b511a0
+  languageName: node
+  linkType: hard
+
+"graasp-plugin-hidden-items@workspace:.":
   version: 0.0.0-use.local
-  resolution: "graasp-hidden-item@workspace:."
+  resolution: "graasp-plugin-hidden-items@workspace:."
   dependencies:
     "@commitlint/cli": ^13.1.0
     "@commitlint/config-conventional": ^13.1.0
@@ -2905,13 +2912,6 @@ __metadata:
     typescript: 4.4.4
   languageName: unknown
   linkType: soft
-
-"graasp-item-tags@graasp/graasp-item-tags#11/taskManagerDbService":
-  version: 0.1.0
-  resolution: "graasp-item-tags@https://github.com/graasp/graasp-item-tags.git#commit=92331ff108221f267822758b59bdb9c31a8d2c90"
-  checksum: 7718175ab0e3112835c2a2bb450bb988b4cba16e7f363bd8fe5ece7003790234c0da42de4fd525e99d74586fbb0d67d413079882e52c8995a2ea642e31b511a0
-  languageName: node
-  linkType: hard
 
 "graceful-fs@npm:^4.1.6, graceful-fs@npm:^4.2.0, graceful-fs@npm:^4.2.4, graceful-fs@npm:^4.2.6":
   version: 4.2.8
