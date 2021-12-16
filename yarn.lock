@@ -2892,8 +2892,8 @@ __metadata:
 
 "graasp-item-tags@graasp/graasp-item-tags#11/taskManagerDbService":
   version: 0.1.0
-  resolution: "graasp-item-tags@https://github.com/graasp/graasp-item-tags.git#commit=92331ff108221f267822758b59bdb9c31a8d2c90"
-  checksum: 7718175ab0e3112835c2a2bb450bb988b4cba16e7f363bd8fe5ece7003790234c0da42de4fd525e99d74586fbb0d67d413079882e52c8995a2ea642e31b511a0
+  resolution: "graasp-item-tags@https://github.com/graasp/graasp-item-tags.git#commit=5c1d1a28a1288db993486fd50406195359892b25"
+  checksum: a038383b96cac7efbd3069967f0fa698a6ec0a12e02f36c10ef30070ea62fad190bcd4427237fe2409e11661267090ab8bc223b1b0d21212089838f28a54402a
   languageName: node
   linkType: hard
 
