@@ -1046,9 +1046,9 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:*":
-  version: 17.0.0
-  resolution: "@types/node@npm:17.0.0"
-  checksum: 30970a70c2eb78dbe80613d73243c255aaa9ce057d9e8595069ca0aef0363db0af45dc0d35f445cc804576a99df2970c170130663d76cd60319b779872e92ad6
+  version: 17.0.2
+  resolution: "@types/node@npm:17.0.2"
+  checksum: a827d2542ef7adba5c79ba7f85b7c2ba8256d317bd99d77ed7af237cfebae0034dff5c4182e1845e6fbef29ae4c78186c4b4a7dbf236037a04120783aa30ba74
   languageName: node
   linkType: hard
 
@@ -1772,9 +1772,9 @@ __metadata:
   linkType: hard
 
 "caniuse-lite@npm:^1.0.30001286":
-  version: 1.0.30001287
-  resolution: "caniuse-lite@npm:1.0.30001287"
-  checksum: b53c26a3a267a2920394e4aa5d1f60a76f891943914068066700e5497dda512f096d8a77dfefda17306a9df06e16ce9c6b5179f8856cc0efbcd8873d13b2fbea
+  version: 1.0.30001291
+  resolution: "caniuse-lite@npm:1.0.30001291"
+  checksum: ae24be79227036564ccd2ab8a0be8793a2e650941607a9f3e68a967db08d90cf17ded0382c2ce87063051b7200e618ec83bdb12f423ed60665922dc4d8eb8f78
   languageName: node
   linkType: hard
 
@@ -2225,9 +2225,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.4.17":
-  version: 1.4.20
-  resolution: "electron-to-chromium@npm:1.4.20"
-  checksum: 1ff0a5a1ab3e637208315a372fd489059762d56ebfcd07969bb014b2dc0b50c9f564aca71cbf5aafa62bf7ee458b5623470048fc0c93c10fef0cadde8151c51c
+  version: 1.4.25
+  resolution: "electron-to-chromium@npm:1.4.25"
+  checksum: 03b01837a1f2548e20a0062d5f87edbdc6656d12c964cebe6260e6975b0509ec6adef6d5cc602ae3815dccd0dadc816d401a337f833a1f1b27c55b7b1e6988bb
   languageName: node
   linkType: hard
 
@@ -3011,8 +3011,8 @@ __metadata:
 
 "graasp-item-tags@graasp/graasp-item-tags#11/taskManagerDbService":
   version: 0.1.0
-  resolution: "graasp-item-tags@https://github.com/graasp/graasp-item-tags.git#commit=5c1d1a28a1288db993486fd50406195359892b25"
-  checksum: a038383b96cac7efbd3069967f0fa698a6ec0a12e02f36c10ef30070ea62fad190bcd4427237fe2409e11661267090ab8bc223b1b0d21212089838f28a54402a
+  resolution: "graasp-item-tags@https://github.com/graasp/graasp-item-tags.git#commit=d93b88ef273826f548248bb33c47b7d29ab45c8a"
+  checksum: bcbebd4c6520d7fd03e45e3684e1f55f5e736b467e7ab806888a02b4f03d9cc52a230b73dbfa912ecaf822be04bfb5098127f8d99d7f3462caea0fdb2d9200a9
   languageName: node
   linkType: hard
 
@@ -3046,8 +3046,8 @@ __metadata:
 
 "graasp-test@github:graasp/graasp-test":
   version: 0.1.0
-  resolution: "graasp-test@https://github.com/graasp/graasp-test.git#commit=ef09071c4844b5ed0d351f3fb181aebec92402c7"
-  checksum: f69559f5b07b74607142b7ddd0ad3de1f407509091b5ec27633219ace32aaba8dddfc10c88044f0f4bc3e61eccb5edd4a109f626ff5d3c4c35da47f3d7af5e77
+  resolution: "graasp-test@https://github.com/graasp/graasp-test.git#commit=407fa7d211ca795d0dd29734b72dbc8c3b68b44d"
+  checksum: c96ae567cf56c7f5948ddb7426c698eb6208c9200e4f45ad1f1b928c43953eb9a3ffc5a08f0f914f28631e6071a47d96b5ef7bdac574b646322ff995c3a79474
   languageName: node
   linkType: hard
 
@@ -3230,9 +3230,9 @@ __metadata:
   linkType: hard
 
 "ignore@npm:^5.1.4, ignore@npm:^5.1.8":
-  version: 5.1.9
-  resolution: "ignore@npm:5.1.9"
-  checksum: 6f6b2235f4e63648116c5814f76b2d3d63fae9c21b8a466862e865732f59e787c9938a9042f9457091db6f0d811508ea3c8c6a60f35bafc4ceea08bbe8f96fd5
+  version: 5.2.0
+  resolution: "ignore@npm:5.2.0"
+  checksum: 6b1f926792d614f64c6c83da3a1f9c83f6196c2839aa41e1e32dd7b8d174cef2e329d75caabb62cb61ce9dc432f75e67d07d122a037312db7caa73166a1bdb77
   languageName: node
   linkType: hard
 
@@ -4971,11 +4971,11 @@ __metadata:
   linkType: hard
 
 "pgpass@npm:1.x":
-  version: 1.0.4
-  resolution: "pgpass@npm:1.0.4"
+  version: 1.0.5
+  resolution: "pgpass@npm:1.0.5"
   dependencies:
-    split2: ^3.1.1
-  checksum: ea4751e9ecf345f1e1deccec761a28576eb9f2775a4689e61f5c010a9a812defdd06043918dcb99ebcb503f57bfce33fe34890b12011629d2fba859c21aa2fed
+    split2: ^4.1.0
+  checksum: 947ac096c031eebdf08d989de2e9f6f156b8133d6858c7c2c06c041e1e71dda6f5f3bad3c0ec1e96a09497bbc6ef89e762eefe703b5ef9cb2804392ec52ec400
   languageName: node
   linkType: hard
 
@@ -5719,12 +5719,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"split2@npm:^3.0.0, split2@npm:^3.1.1":
+"split2@npm:^3.0.0":
   version: 3.2.2
   resolution: "split2@npm:3.2.2"
   dependencies:
     readable-stream: ^3.0.0
   checksum: 8127ddbedd0faf31f232c0e9192fede469913aa8982aa380752e0463b2e31c2359ef6962eb2d24c125bac59eeec76873678d723b1c7ff696216a1cd071e3994a
+  languageName: node
+  linkType: hard
+
+"split2@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "split2@npm:4.1.0"
+  checksum: ec581597cb74c13cdfb5e2047543dd40cb1e8e9803c7b1e0c29ede05f2b4f049b2d6e7f2788a225d544549375719658b8f38e9366364dec35dc7a12edfda5ee5
   languageName: node
   linkType: hard
 

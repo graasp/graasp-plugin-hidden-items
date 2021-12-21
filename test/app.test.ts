@@ -1,5 +1,5 @@
 import { ItemTaskManager, ItemMembershipTaskManager, TaskRunner } from 'graasp-test';
-import { GRAASP_ACTOR, HIDDEN_ITEM_TAG_ID, ITEM_FILE, ITEM_FOLDER } from './constants';
+import { GRAASP_ACTOR, HIDDEN_ITEM_TAG_ID, ITEM_FILE, ITEM_FOLDER, ERROR } from './constants';
 import build from './app';
 import { mockCreateGetMemberItemMembershipTask, mockCreateGetOfItemTask } from './mocks';
 
@@ -18,13 +18,19 @@ describe('test', () => {
   describe('getGetTaskName setTaskPostHookHandler', () => {
     it('Item without tag should success', async () => {
       const item = ITEM_FILE;
-
       mockCreateGetOfItemTask([]);
-      mockCreateGetMemberItemMembershipTask(ITEM_FILE);
+      mockCreateGetMemberItemMembershipTask({});
 
       jest.spyOn(runner, 'setTaskPostHookHandler').mockImplementation(async (name, fn) => {
         if (name === itemTaskManager.getGetTaskName()) {
-          expect(fn(item, actor, { log: undefined })).resolves;
+          jest
+            .spyOn(TaskRunner.prototype, 'runSingleSequence')
+            .mockImplementation(async (tasks) => {
+              tasks[1].getInput();
+              expect(tasks[1].skip).toBeTruthy();
+              return true;
+            });
+          expect(await fn(item, actor, { log: undefined })).resolves;
         }
       });
 
@@ -38,13 +44,19 @@ describe('test', () => {
 
     it('Item with tag and admin should success', async () => {
       const item = ITEM_FILE;
-
-      mockCreateGetOfItemTask([{ tagId: HIDDEN_ITEM_TAG_ID }]);
-      mockCreateGetMemberItemMembershipTask(ITEM_FILE);
+      mockCreateGetOfItemTask([{ tagId: HIDDEN_ITEM_TAG_ID, itemPath: ITEM_FILE.path }]);
+      mockCreateGetMemberItemMembershipTask({});
 
       jest.spyOn(runner, 'setTaskPostHookHandler').mockImplementation(async (name, fn) => {
         if (name === itemTaskManager.getGetTaskName()) {
-          expect(fn(item, actor, { log: undefined })).resolves;
+          jest
+            .spyOn(TaskRunner.prototype, 'runSingleSequence')
+            .mockImplementation(async (tasks) => {
+              tasks[1].getInput();
+              expect(tasks[1].skip).toBeFalsy();
+              return true;
+            });
+          expect(await fn(item, actor, { log: undefined })).resolves;
         }
       });
 
@@ -58,16 +70,20 @@ describe('test', () => {
 
     it('Item with tag and less than admin should fail', async () => {
       const item = ITEM_FILE;
-
-      mockCreateGetOfItemTask([{ tagId: HIDDEN_ITEM_TAG_ID }], true);
-      mockCreateGetMemberItemMembershipTask(new Error('Member cannot write item'), true);
+      mockCreateGetOfItemTask([{ tagId: HIDDEN_ITEM_TAG_ID, itemPath: ITEM_FILE.path }]);
+      mockCreateGetMemberItemMembershipTask({});
 
       jest.spyOn(runner, 'setTaskPostHookHandler').mockImplementation(async (name, fn) => {
         if (name === itemTaskManager.getGetTaskName()) {
-          expect(fn(item, actor, { log: undefined })).rejects.toEqual(
-            [{ tagId: HIDDEN_ITEM_TAG_ID }],
-            //new Error('Member cannot write item'),
-          );
+          jest
+            .spyOn(TaskRunner.prototype, 'runSingleSequence')
+            .mockImplementation(async (tasks) => {
+              tasks[1].getInput();
+              expect(tasks[1].skip).toBeFalsy();
+              throw ERROR;
+            });
+
+          expect(fn(item, actor, { log: undefined })).rejects.toEqual(ERROR);
         }
       });
 
@@ -83,13 +99,19 @@ describe('test', () => {
   describe('getGetOwnTaskName setTaskPostHookHandler', () => {
     it('Items without tag should success', async () => {
       const items = [ITEM_FOLDER, ITEM_FILE];
-
       mockCreateGetOfItemTask([]);
-      mockCreateGetMemberItemMembershipTask(ITEM_FILE);
+      mockCreateGetMemberItemMembershipTask({});
 
       jest.spyOn(runner, 'setTaskPostHookHandler').mockImplementation(async (name, fn) => {
         if (name === itemTaskManager.getGetOwnTaskName()) {
-          expect(fn(items, actor, { log: undefined })).resolves;
+          jest
+            .spyOn(TaskRunner.prototype, 'runSingleSequence')
+            .mockImplementation(async (tasks) => {
+              tasks[1].getInput();
+              expect(tasks[1].skip).toBeTruthy();
+              return true;
+            });
+          expect(await fn(items, actor, { log: undefined })).resolves;
           expect(items).toEqual([ITEM_FOLDER, ITEM_FILE]);
         }
       });
@@ -102,20 +124,27 @@ describe('test', () => {
       });
     });
 
-    it('Items with tag and admin should success', async () => {
+    it('Items with tag and admin should success', (done) => {
       const items = [ITEM_FOLDER, ITEM_FILE];
-
-      mockCreateGetOfItemTask([{ tagId: HIDDEN_ITEM_TAG_ID }]);
-      mockCreateGetMemberItemMembershipTask(ITEM_FILE);
+      mockCreateGetOfItemTask([{ tagId: HIDDEN_ITEM_TAG_ID, itemPath: ITEM_FILE.path }]);
+      mockCreateGetMemberItemMembershipTask({});
 
       jest.spyOn(runner, 'setTaskPostHookHandler').mockImplementation(async (name, fn) => {
         if (name === itemTaskManager.getGetOwnTaskName()) {
-          expect(fn(items, actor, { log: undefined })).resolves;
+          jest
+            .spyOn(TaskRunner.prototype, 'runSingleSequence')
+            .mockImplementation(async (tasks) => {
+              tasks[1].getInput();
+              expect(tasks[1].skip).toBeFalsy();
+              return true;
+            });
+          expect(await fn(items, actor, { log: undefined })).resolves;
           expect(items).toEqual([ITEM_FOLDER, ITEM_FILE]);
+          done();
         }
       });
 
-      await build({
+      build({
         itemTaskManager,
         runner,
         itemMembershipTaskManager,
@@ -125,17 +154,20 @@ describe('test', () => {
 
     it('Item with tag and less than admin should fail', async () => {
       const items = [ITEM_FOLDER, ITEM_FILE];
-
-      mockCreateGetOfItemTask([{ tagId: HIDDEN_ITEM_TAG_ID }], true);
-      mockCreateGetMemberItemMembershipTask(new Error('Member cannot write item'), true);
+      mockCreateGetOfItemTask([{ tagId: HIDDEN_ITEM_TAG_ID, itemPath: ITEM_FILE.path }]);
+      mockCreateGetMemberItemMembershipTask({});
 
       jest.spyOn(runner, 'setTaskPostHookHandler').mockImplementation(async (name, fn) => {
         if (name === itemTaskManager.getGetOwnTaskName()) {
-          const promise = fn(items, actor, { log: undefined });
-          await promise;
-          expect(promise).resolves;
-          expect(items).toEqual([]);
-          //new Error('Member cannot write item'),
+          jest
+            .spyOn(TaskRunner.prototype, 'runSingleSequence')
+            .mockImplementation(async (tasks) => {
+              tasks[1].getInput();
+              expect(tasks[1].skip).toBeFalsy();
+              throw ERROR;
+            });
+          expect(await fn(items, actor, { log: undefined })).resolves;
+          expect([]).toEqual(items);
         }
       });
 
@@ -151,13 +183,19 @@ describe('test', () => {
   describe('getGetSharedWithTaskName setTaskPostHookHandler', () => {
     it('Items without tag should success', async () => {
       const items = [ITEM_FOLDER, ITEM_FILE];
-
       mockCreateGetOfItemTask([]);
-      mockCreateGetMemberItemMembershipTask(ITEM_FILE);
+      mockCreateGetMemberItemMembershipTask({});
 
       jest.spyOn(runner, 'setTaskPostHookHandler').mockImplementation(async (name, fn) => {
         if (name === itemTaskManager.getGetSharedWithTaskName()) {
-          expect(fn(items, actor, { log: undefined })).resolves;
+          jest
+            .spyOn(TaskRunner.prototype, 'runSingleSequence')
+            .mockImplementation(async (tasks) => {
+              tasks[1].getInput();
+              expect(tasks[1].skip).toBeTruthy();
+              return true;
+            });
+          expect(await fn(items, actor, { log: undefined })).resolves;
           expect(items).toEqual([ITEM_FOLDER, ITEM_FILE]);
         }
       });
@@ -172,13 +210,19 @@ describe('test', () => {
 
     it('Items with tag and admin should success', async () => {
       const items = [ITEM_FOLDER, ITEM_FILE];
-
-      mockCreateGetOfItemTask([{ tagId: HIDDEN_ITEM_TAG_ID }]);
-      mockCreateGetMemberItemMembershipTask(ITEM_FILE);
+      mockCreateGetOfItemTask([{ tagId: HIDDEN_ITEM_TAG_ID, itemPath: ITEM_FILE.path }]);
+      mockCreateGetMemberItemMembershipTask({});
 
       jest.spyOn(runner, 'setTaskPostHookHandler').mockImplementation(async (name, fn) => {
         if (name === itemTaskManager.getGetSharedWithTaskName()) {
-          expect(fn(items, actor, { log: undefined })).resolves;
+          jest
+            .spyOn(TaskRunner.prototype, 'runSingleSequence')
+            .mockImplementation(async (tasks) => {
+              tasks[1].getInput();
+              expect(tasks[1].skip).toBeFalsy();
+              return true;
+            });
+          expect(await fn(items, actor, { log: undefined })).resolves;
           expect(items).toEqual([ITEM_FOLDER, ITEM_FILE]);
         }
       });
@@ -193,17 +237,20 @@ describe('test', () => {
 
     it('Item with tag and less than admin should fail', async () => {
       const items = [ITEM_FOLDER, ITEM_FILE];
-
-      mockCreateGetOfItemTask([{ tagId: HIDDEN_ITEM_TAG_ID }], true);
-      mockCreateGetMemberItemMembershipTask(new Error('Member cannot write item'), true);
+      mockCreateGetOfItemTask([{ tagId: HIDDEN_ITEM_TAG_ID, itemPath: ITEM_FILE.path }]);
+      mockCreateGetMemberItemMembershipTask({});
 
       jest.spyOn(runner, 'setTaskPostHookHandler').mockImplementation(async (name, fn) => {
         if (name === itemTaskManager.getGetSharedWithTaskName()) {
-          const promise = fn(items, actor, { log: undefined });
-          await promise;
-          expect(promise).resolves;
+          jest
+            .spyOn(TaskRunner.prototype, 'runSingleSequence')
+            .mockImplementation(async (tasks) => {
+              tasks[1].getInput();
+              expect(tasks[1].skip).toBeFalsy();
+              throw ERROR;
+            });
+          expect(await fn(items, actor, { log: undefined })).resolves;
           expect(items).toEqual([]);
-          // new Error('Member cannot write item'),
         }
       });
 
@@ -219,13 +266,19 @@ describe('test', () => {
   describe('getGetChildrenTaskName setTaskPostHookHandler', () => {
     it('Items without tag should success', async () => {
       const items = [ITEM_FOLDER, ITEM_FILE];
-
       mockCreateGetOfItemTask([]);
-      mockCreateGetMemberItemMembershipTask(ITEM_FILE);
+      mockCreateGetMemberItemMembershipTask({});
 
       jest.spyOn(runner, 'setTaskPostHookHandler').mockImplementation(async (name, fn) => {
         if (name === itemTaskManager.getGetChildrenTaskName()) {
-          expect(fn(items, actor, { log: undefined })).resolves;
+          jest
+            .spyOn(TaskRunner.prototype, 'runSingleSequence')
+            .mockImplementation(async (tasks) => {
+              tasks[1].getInput();
+              expect(tasks[1].skip).toBeTruthy();
+              return true;
+            });
+          expect(await fn(items, actor, { log: undefined })).resolves;
           expect(items).toEqual([ITEM_FOLDER, ITEM_FILE]);
         }
       });
@@ -240,13 +293,19 @@ describe('test', () => {
 
     it('Items with tag and admin should success', async () => {
       const items = [ITEM_FOLDER, ITEM_FILE];
-
-      mockCreateGetOfItemTask([{ tagId: HIDDEN_ITEM_TAG_ID }]);
-      mockCreateGetMemberItemMembershipTask(ITEM_FILE);
+      mockCreateGetOfItemTask([{ tagId: HIDDEN_ITEM_TAG_ID, itemPath: ITEM_FILE.path }]);
+      mockCreateGetMemberItemMembershipTask({});
 
       jest.spyOn(runner, 'setTaskPostHookHandler').mockImplementation(async (name, fn) => {
         if (name === itemTaskManager.getGetChildrenTaskName()) {
-          expect(fn(items, actor, { log: undefined })).resolves;
+          jest
+            .spyOn(TaskRunner.prototype, 'runSingleSequence')
+            .mockImplementation(async (tasks) => {
+              tasks[1].getInput();
+              expect(tasks[1].skip).toBeFalsy();
+              return true;
+            });
+          expect(await fn(items, actor, { log: undefined })).resolves;
           expect(items).toEqual([ITEM_FOLDER, ITEM_FILE]);
         }
       });
@@ -261,17 +320,20 @@ describe('test', () => {
 
     it('Item with tag and less than admin should fail', async () => {
       const items = [ITEM_FOLDER, ITEM_FILE];
-
-      mockCreateGetOfItemTask([{ tagId: HIDDEN_ITEM_TAG_ID }], true);
-      mockCreateGetMemberItemMembershipTask(new Error('Member cannot write item'), true);
+      mockCreateGetOfItemTask([{ tagId: HIDDEN_ITEM_TAG_ID, itemPath: ITEM_FILE.path }]);
+      mockCreateGetMemberItemMembershipTask({});
 
       jest.spyOn(runner, 'setTaskPostHookHandler').mockImplementation(async (name, fn) => {
         if (name === itemTaskManager.getGetChildrenTaskName()) {
-          const promise = fn(items, actor, { log: undefined });
-          await promise;
-          expect(promise).resolves;
+          jest
+            .spyOn(TaskRunner.prototype, 'runSingleSequence')
+            .mockImplementation(async (tasks) => {
+              tasks[1].getInput();
+              expect(tasks[1].skip).toBeFalsy();
+              throw ERROR;
+            });
+          expect(await fn(items, actor, { log: undefined })).resolves;
           expect(items).toEqual([]);
-          //new Error('Member cannot write item'),
         }
       });
 

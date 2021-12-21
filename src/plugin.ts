@@ -1,6 +1,7 @@
 import { FastifyLoggerInstance, FastifyPluginAsync } from 'fastify';
 import { Actor, Item, Member, PermissionLevel, UnknownExtra } from 'graasp';
 import { ItemTagTaskManager, ItemTagService } from 'graasp-item-tags';
+import { isGraaspError } from './utils';
 
 export interface GraaspHiddenOptions {
   hiddenTagId: string;
@@ -20,16 +21,15 @@ const plugin: FastifyPluginAsync<GraaspHiddenOptions> = async (fastify, options)
 
   const isItemHidden = async (item: Item, actor: Actor, log: FastifyLoggerInstance) => {
     const t1 = taskManager.createGetOfItemTask(actor as Member, item.id);
-    const tags = await runner.runSingle(t1, log);
+    const t2 = membershipTaskManager.createGetMemberItemMembershipTask(actor, {
+      item,
+      validatePermission: 'admin' as PermissionLevel,
+    });
+    t2.getInput = () => {
+      t2.skip = t1.result.filter(({ tagId }) => tagId === hiddenTagId).length <= 0;
+    };
 
-    // item is hidden
-    if (tags.filter(({ tagId }) => tagId === hiddenTagId).length > 0) {
-      const t2 = membershipTaskManager.createGetMemberItemMembershipTask(actor, {
-        item,
-        validatePermission: 'admin' as PermissionLevel,
-      });
-      await runner.runSingle(t2, log);
-    }
+    await runner.runSingleSequence([t1, t2], log);
   };
 
   runner.setTaskPostHookHandler<Item>(
@@ -48,7 +48,10 @@ const plugin: FastifyPluginAsync<GraaspHiddenOptions> = async (fastify, options)
             await isItemHidden(item, actor, log);
             return item;
           } catch (err) {
-            return null as unknown as Item<UnknownExtra>;
+            if (isGraaspError(err)) {
+              return null as unknown as Item<UnknownExtra>;
+            }
+            throw err;
           }
         }),
       );
@@ -65,7 +68,10 @@ const plugin: FastifyPluginAsync<GraaspHiddenOptions> = async (fastify, options)
             await isItemHidden(item, actor, log);
             return item;
           } catch (err) {
-            return null as unknown as Item<UnknownExtra>;
+            if (isGraaspError(err)) {
+              return null as unknown as Item<UnknownExtra>;
+            }
+            throw err;
           }
         }),
       );
@@ -82,7 +88,10 @@ const plugin: FastifyPluginAsync<GraaspHiddenOptions> = async (fastify, options)
             await isItemHidden(item, actor, log);
             return item;
           } catch (err) {
-            return null as unknown as Item<UnknownExtra>;
+            if (isGraaspError(err)) {
+              return null as unknown as Item<UnknownExtra>;
+            }
+            throw err;
           }
         }),
       );

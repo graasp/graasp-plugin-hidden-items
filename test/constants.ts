@@ -1,7 +1,13 @@
 import { v4 } from 'uuid';
 import { Actor, Item } from 'graasp';
+import { MockGraaspError } from './mocks';
 
 export const HIDDEN_ITEM_TAG_ID = 'hiddenTagId';
+export const ERROR = new MockGraaspError({
+  code: 'GR000',
+  statusCode: 500,
+  message: 'Member cannot write item',
+});
 
 export const ITEM_FILE: Item = {
   id: v4(),
