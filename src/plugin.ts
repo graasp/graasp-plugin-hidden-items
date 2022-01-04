@@ -17,10 +17,10 @@ const plugin: FastifyPluginAsync<GraaspHiddenOptions> = async (fastify, options)
   const { hiddenTagId } = options;
 
   const iTS = new ItemTagService();
-  const taskManager = new ItemTagTaskManager(iS, iMS, iTS);
+  const taskManager = new ItemTagTaskManager(iS, iMS, iTS, itemTaskManager);
 
   const isItemHidden = async (item: Item, actor: Actor, log: FastifyLoggerInstance) => {
-    const t1 = taskManager.createGetOfItemTask(actor as Member, item.id);
+    const t1 = taskManager.createGetOfItemTask(actor as Member, item);
     const t2 = membershipTaskManager.createGetMemberItemMembershipTask(actor, {
       item,
       validatePermission: 'admin' as PermissionLevel,

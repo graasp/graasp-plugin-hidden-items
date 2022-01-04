@@ -32,7 +32,7 @@ export const mockCreateGetOfItemTask = (data: Partial<ItemTag>[] | Error): jest.
   const mockCreateTask = jest
     .spyOn(ItemTagTaskManager.prototype, 'createGetOfItemTask')
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    .mockImplementation((_member: Member<UnknownExtra>, _itemId: string) => {
+    .mockImplementation((_member: Member<UnknownExtra>, _itemId: Item<UnknownExtra>) => {
       const task = new MockTask(data);
       return task as unknown as GetItemsItemTagsTask;
     });
