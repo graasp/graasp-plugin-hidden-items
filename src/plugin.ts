@@ -1,5 +1,5 @@
 import { FastifyLoggerInstance, FastifyPluginAsync } from 'fastify';
-import { Actor, Item, Member, PermissionLevel, UnknownExtra } from 'graasp';
+import { Actor, Item, Member, PermissionLevel } from 'graasp';
 import { ItemTagTaskManager, ItemTagService } from 'graasp-item-tags';
 import { isGraaspError } from './utils';
 
@@ -19,14 +19,15 @@ const plugin: FastifyPluginAsync<GraaspHiddenOptions> = async (fastify, options)
   const iTS = new ItemTagService();
   const taskManager = new ItemTagTaskManager(iS, iMS, iTS, itemTaskManager);
 
+  // Hide the item for all users that don't have at least admin permission over it
   const isItemHidden = async (item: Item, actor: Actor, log: FastifyLoggerInstance) => {
     const t1 = taskManager.createGetOfItemTask(actor as Member, item);
     const t2 = membershipTaskManager.createGetMemberItemMembershipTask(actor, {
       item,
-      validatePermission: 'admin' as PermissionLevel,
+      validatePermission: PermissionLevel.Admin,
     });
     t2.getInput = () => {
-      t2.skip = t1.result.filter(({ tagId }) => tagId === hiddenTagId).length <= 0;
+      t2.skip = !Boolean(t1.result.filter(({ tagId }) => tagId === hiddenTagId).length);
     };
 
     await runner.runSingleSequence([t1, t2], log);
@@ -49,12 +50,14 @@ const plugin: FastifyPluginAsync<GraaspHiddenOptions> = async (fastify, options)
             return item;
           } catch (err) {
             if (isGraaspError(err)) {
-              return null as unknown as Item<UnknownExtra>;
+              return null;
             }
             throw err;
           }
         }),
       );
+
+      // Remve all hidden items in-place because we can't return a value from the handler
       items.splice(0, items.length, ...filteredItems.filter(Boolean));
     },
   );
@@ -69,12 +72,14 @@ const plugin: FastifyPluginAsync<GraaspHiddenOptions> = async (fastify, options)
             return item;
           } catch (err) {
             if (isGraaspError(err)) {
-              return null as unknown as Item<UnknownExtra>;
+              return null;
             }
             throw err;
           }
         }),
       );
+
+      // Remve all hidden items in-place because we can't return a value from the handler
       items.splice(0, items.length, ...filteredItems.filter(Boolean));
     },
   );
@@ -89,12 +94,14 @@ const plugin: FastifyPluginAsync<GraaspHiddenOptions> = async (fastify, options)
             return item;
           } catch (err) {
             if (isGraaspError(err)) {
-              return null as unknown as Item<UnknownExtra>;
+              return null;
             }
             throw err;
           }
         }),
       );
+
+      // Remve all hidden items in-place because we can't return a value from the handler
       items.splice(0, items.length, ...filteredItems.filter(Boolean));
     },
   );
