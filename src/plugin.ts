@@ -24,7 +24,7 @@ const plugin: FastifyPluginAsync<GraaspHiddenOptions> = async (fastify, options)
     const t1 = taskManager.createGetOfItemTask(actor as Member, item);
     const t2 = membershipTaskManager.createGetMemberItemMembershipTask(actor, {
       item,
-      validatePermission: PermissionLevel.Admin,
+      validatePermission: 'admin' as PermissionLevel,
     });
     t2.getInput = () => {
       t2.skip = !Boolean(t1.result.filter(({ tagId }) => tagId === hiddenTagId).length);
