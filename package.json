@@ -1,8 +1,8 @@
 {
-  "name": "graasp-repo",
+  "name": "graasp-plugin-hidden-items",
   "author": "Graasp Association",
   "version": "0.1.0",
-  "description": "Repository template for Graasp",
+  "description": "Hidden items plugin for Graasp",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -14,30 +14,40 @@
     "prepack": "yarn build",
     "prettier:check": "prettier --check \"{src,test}/**/*.ts\"",
     "prettier:write": "prettier --write \"{src,test}/**/*.ts\"",
-    "test": "jest  --forceExit --coverage --verbose",
+    "test": "jest test --forceExit --coverage --verbose",
     "test:watch": "yarn test --watchAll",
     "lint": "eslint ."
   },
-  "repository": "git@github.com:graasp/graasp-repo.git",
+  "repository": "git@github.com:graasp/graasp-plugin-hidden-items.git",
   "license": "AGPL",
   "bugs": {
-    "url": "https://github.com/graasp/graasp-repo/issues"
+    "url": "https://github.com/graasp/graasp-plugin-hidden-items/issues"
   },
-  "homepage": "https://github.com/graasp/graasp-repo#readme",
+  "homepage": "https://github.com/graasp/graasp-plugin-hidden-items#readme",
+  "dependencies": {
+    "graasp-item-tags": "graasp/graasp-item-tags"
+  },
   "devDependencies": {
     "@commitlint/cli": "^13.1.0",
     "@commitlint/config-conventional": "^13.1.0",
-    "@types/jest": "27.0.1",
-    "@typescript-eslint/eslint-plugin": "5.4.0",
-    "@typescript-eslint/parser": "5.4.0",
-    "eslint": "^7.13.0",
+    "@types/graasp": "github:graasp/graasp-types",
+    "@types/jest": "27.0.3",
+    "@types/node": "16.11.14",
+    "@types/uuid": "8.3.3",
+    "@typescript-eslint/eslint-plugin": "5.7.0",
+    "@typescript-eslint/parser": "5.7.0",
+    "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
+    "fastify": "3.25.0",
+    "graasp-test": "github:graasp/graasp-test",
     "husky": "7.0.4",
-    "jest": "27.3.0",
+    "jest": "27.4.5",
     "prettier": "2.5.1",
     "pretty-quick": "3.1.2",
+    "slonik": "26.1.0",
     "ts-jest": "27.0.7",
-    "typescript": "4.4.4"
+    "typescript": "4.4.4",
+    "uuid": "8.3.2"
   },
   "packageManager": "yarn@3.2.0-rc.8"
 }
