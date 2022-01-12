@@ -57,7 +57,7 @@ const plugin: FastifyPluginAsync<GraaspHiddenOptions> = async (fastify, options)
         }),
       );
 
-      // Remve all hidden items in-place because we can't return a value from the handler
+      // Remove all hidden items in-place because we can't return a value from the handler
       items.splice(0, items.length, ...filteredItems.filter(Boolean));
     },
   );
@@ -79,7 +79,7 @@ const plugin: FastifyPluginAsync<GraaspHiddenOptions> = async (fastify, options)
         }),
       );
 
-      // Remve all hidden items in-place because we can't return a value from the handler
+      // Remove all hidden items in-place because we can't return a value from the handler
       items.splice(0, items.length, ...filteredItems.filter(Boolean));
     },
   );
@@ -101,7 +101,7 @@ const plugin: FastifyPluginAsync<GraaspHiddenOptions> = async (fastify, options)
         }),
       );
 
-      // Remve all hidden items in-place because we can't return a value from the handler
+      // Remove all hidden items in-place because we can't return a value from the handler
       items.splice(0, items.length, ...filteredItems.filter(Boolean));
     },
   );

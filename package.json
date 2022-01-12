@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/graasp/graasp-plugin-hidden-items#readme",
   "dependencies": {
-    "graasp-item-tags": "graasp/graasp-item-tags#13/getMultiple"
+    "graasp-item-tags": "graasp/graasp-item-tags"
   },
   "devDependencies": {
     "@commitlint/cli": "^13.1.0",
