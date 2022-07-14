@@ -1,9 +1,9 @@
-import { GraaspError, Item, Member, UnknownExtra } from 'graasp';
+import { GraaspError, Item, Member, UnknownExtra } from '@graasp/sdk';
 import { ItemTag, ItemTagTaskManager } from 'graasp-item-tags';
 import { GetItemsItemTagsTask } from 'graasp-item-tags/dist/tasks/get-items-item-tags-task';
 import {
-  Task as MockTask,
   ItemMembershipTaskManager as MockItemMembershipTaskManager,
+  Task as MockTask,
 } from 'graasp-test';
 
 // using multiple mocks updates runSingleSequence multiple times
