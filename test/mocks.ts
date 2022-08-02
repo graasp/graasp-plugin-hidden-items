@@ -1,4 +1,4 @@
-import { GraaspError, Item, Member, UnknownExtra } from '@graasp/sdk';
+import { GraaspError, Item, ItemMembership, Member, UnknownExtra } from '@graasp/sdk';
 import { ItemTag, ItemTagTaskManager } from 'graasp-item-tags';
 import { GetItemsItemTagsTask } from 'graasp-item-tags/dist/tasks/get-items-item-tags-task';
 import {
@@ -40,12 +40,12 @@ export const mockCreateGetOfItemTask = (data: Partial<ItemTag>[] | Error): jest.
 };
 
 export const mockCreateGetMemberItemMembershipTask = (
-  data: Partial<Item> | Error,
+  data: Partial<ItemMembership> | Error,
 ): jest.SpyInstance => {
   const mockTask = jest
     .spyOn(MockItemMembershipTaskManager.prototype, 'createGetMemberItemMembershipTask')
     .mockImplementation(() => {
-      return new MockTask(data);
+      return new MockTask<ItemMembership>(data);
     });
   return mockTask;
 };
