@@ -1,5 +1,7 @@
 import { v4 } from 'uuid';
-import { Actor, Item } from 'graasp';
+
+import { Actor, Item } from '@graasp/sdk';
+
 import { MockGraaspError } from './mocks';
 
 export const HIDDEN_ITEM_TAG_ID = 'hiddenTagId';

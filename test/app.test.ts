@@ -1,12 +1,16 @@
-import { ItemTaskManager, ItemMembershipTaskManager, TaskRunner } from 'graasp-test';
-import { GRAASP_ACTOR, HIDDEN_ITEM_TAG_ID, ITEM_FILE, ITEM_FOLDER, ERROR } from './constants';
+import { FastifyLoggerInstance } from 'fastify';
+
+import { ItemMembershipTaskManager, ItemTaskManager, TaskRunner } from 'graasp-test';
+
 import build from './app';
+import { ERROR, GRAASP_ACTOR, HIDDEN_ITEM_TAG_ID, ITEM_FILE, ITEM_FOLDER } from './constants';
 import { mockCreateGetMemberItemMembershipTask, mockCreateGetOfItemTask } from './mocks';
 
 const itemTaskManager = new ItemTaskManager();
 const itemMembershipTaskManager = new ItemMembershipTaskManager();
 const runner = new TaskRunner();
 const actor = GRAASP_ACTOR;
+const MOCK_LOGGER = {} as unknown as FastifyLoggerInstance;
 
 describe('test', () => {
   beforeEach(() => {
@@ -26,11 +30,11 @@ describe('test', () => {
           jest
             .spyOn(TaskRunner.prototype, 'runSingleSequence')
             .mockImplementation(async (tasks) => {
-              tasks[1].getInput();
+              tasks[1].getInput?.();
               expect(tasks[1].skip).toBeTruthy();
               return true;
             });
-          expect(await fn(item, actor, { log: undefined })).resolves;
+          expect(await fn(item, actor, { log: MOCK_LOGGER })).resolves;
         }
       });
 
@@ -52,11 +56,11 @@ describe('test', () => {
           jest
             .spyOn(TaskRunner.prototype, 'runSingleSequence')
             .mockImplementation(async (tasks) => {
-              tasks[1].getInput();
+              tasks[1].getInput?.();
               expect(tasks[1].skip).toBeFalsy();
               return true;
             });
-          expect(await fn(item, actor, { log: undefined })).resolves;
+          expect(await fn(item, actor, { log: MOCK_LOGGER })).resolves;
         }
       });
 
@@ -78,12 +82,12 @@ describe('test', () => {
           jest
             .spyOn(TaskRunner.prototype, 'runSingleSequence')
             .mockImplementation(async (tasks) => {
-              tasks[1].getInput();
+              tasks[1].getInput?.();
               expect(tasks[1].skip).toBeFalsy();
               throw ERROR;
             });
 
-          expect(fn(item, actor, { log: undefined })).rejects.toEqual(ERROR);
+          expect(fn(item, actor, { log: MOCK_LOGGER })).rejects.toEqual(ERROR);
         }
       });
 
@@ -107,11 +111,11 @@ describe('test', () => {
           jest
             .spyOn(TaskRunner.prototype, 'runSingleSequence')
             .mockImplementation(async (tasks) => {
-              tasks[1].getInput();
+              tasks[1].getInput?.();
               expect(tasks[1].skip).toBeTruthy();
               return true;
             });
-          expect(await fn(items, actor, { log: undefined })).resolves;
+          expect(await fn(items, actor, { log: MOCK_LOGGER })).resolves;
           expect(items).toEqual([ITEM_FOLDER, ITEM_FILE]);
         }
       });
@@ -134,11 +138,11 @@ describe('test', () => {
           jest
             .spyOn(TaskRunner.prototype, 'runSingleSequence')
             .mockImplementation(async (tasks) => {
-              tasks[1].getInput();
+              tasks[1].getInput?.();
               expect(tasks[1].skip).toBeFalsy();
               return true;
             });
-          expect(await fn(items, actor, { log: undefined })).resolves;
+          expect(await fn(items, actor, { log: MOCK_LOGGER })).resolves;
           expect(items).toEqual([ITEM_FOLDER, ITEM_FILE]);
           done();
         }
@@ -162,11 +166,11 @@ describe('test', () => {
           jest
             .spyOn(TaskRunner.prototype, 'runSingleSequence')
             .mockImplementation(async (tasks) => {
-              tasks[1].getInput();
+              tasks[1].getInput?.();
               expect(tasks[1].skip).toBeFalsy();
               throw ERROR;
             });
-          expect(await fn(items, actor, { log: undefined })).resolves;
+          expect(await fn(items, actor, { log: MOCK_LOGGER })).resolves;
           expect([]).toEqual(items);
         }
       });
@@ -191,11 +195,11 @@ describe('test', () => {
           jest
             .spyOn(TaskRunner.prototype, 'runSingleSequence')
             .mockImplementation(async (tasks) => {
-              tasks[1].getInput();
+              tasks[1].getInput?.();
               expect(tasks[1].skip).toBeTruthy();
               return true;
             });
-          expect(await fn(items, actor, { log: undefined })).resolves;
+          expect(await fn(items, actor, { log: MOCK_LOGGER })).resolves;
           expect(items).toEqual([ITEM_FOLDER, ITEM_FILE]);
         }
       });
@@ -218,11 +222,11 @@ describe('test', () => {
           jest
             .spyOn(TaskRunner.prototype, 'runSingleSequence')
             .mockImplementation(async (tasks) => {
-              tasks[1].getInput();
+              tasks[1].getInput?.();
               expect(tasks[1].skip).toBeFalsy();
               return true;
             });
-          expect(await fn(items, actor, { log: undefined })).resolves;
+          expect(await fn(items, actor, { log: MOCK_LOGGER })).resolves;
           expect(items).toEqual([ITEM_FOLDER, ITEM_FILE]);
         }
       });
@@ -245,11 +249,11 @@ describe('test', () => {
           jest
             .spyOn(TaskRunner.prototype, 'runSingleSequence')
             .mockImplementation(async (tasks) => {
-              tasks[1].getInput();
+              tasks[1].getInput?.();
               expect(tasks[1].skip).toBeFalsy();
               throw ERROR;
             });
-          expect(await fn(items, actor, { log: undefined })).resolves;
+          expect(await fn(items, actor, { log: MOCK_LOGGER })).resolves;
           expect(items).toEqual([]);
         }
       });
@@ -274,11 +278,11 @@ describe('test', () => {
           jest
             .spyOn(TaskRunner.prototype, 'runSingleSequence')
             .mockImplementation(async (tasks) => {
-              tasks[1].getInput();
+              tasks[1].getInput?.();
               expect(tasks[1].skip).toBeTruthy();
               return true;
             });
-          expect(await fn(items, actor, { log: undefined })).resolves;
+          expect(await fn(items, actor, { log: MOCK_LOGGER })).resolves;
           expect(items).toEqual([ITEM_FOLDER, ITEM_FILE]);
         }
       });
@@ -301,11 +305,11 @@ describe('test', () => {
           jest
             .spyOn(TaskRunner.prototype, 'runSingleSequence')
             .mockImplementation(async (tasks) => {
-              tasks[1].getInput();
+              tasks[1].getInput?.();
               expect(tasks[1].skip).toBeFalsy();
               return true;
             });
-          expect(await fn(items, actor, { log: undefined })).resolves;
+          expect(await fn(items, actor, { log: MOCK_LOGGER })).resolves;
           expect(items).toEqual([ITEM_FOLDER, ITEM_FILE]);
         }
       });
@@ -328,11 +332,11 @@ describe('test', () => {
           jest
             .spyOn(TaskRunner.prototype, 'runSingleSequence')
             .mockImplementation(async (tasks) => {
-              tasks[1].getInput();
+              tasks[1].getInput?.();
               expect(tasks[1].skip).toBeFalsy();
               throw ERROR;
             });
-          expect(await fn(items, actor, { log: undefined })).resolves;
+          expect(await fn(items, actor, { log: MOCK_LOGGER })).resolves;
           expect(items).toEqual([]);
         }
       });

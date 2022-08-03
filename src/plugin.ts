@@ -1,6 +1,8 @@
 import { FastifyLoggerInstance, FastifyPluginAsync } from 'fastify';
-import { Actor, Item, Member, PermissionLevel } from 'graasp';
-import { ItemTagTaskManager, ItemTagService } from 'graasp-item-tags';
+
+import { Actor, Item, Member, PermissionLevel } from '@graasp/sdk';
+import { ItemTagService, ItemTagTaskManager } from 'graasp-item-tags';
+
 import { isGraaspError } from './utils';
 
 export interface GraaspHiddenOptions {
@@ -24,7 +26,7 @@ const plugin: FastifyPluginAsync<GraaspHiddenOptions> = async (fastify, options)
     const t1 = taskManager.createGetOfItemTask(actor as Member, item);
     const t2 = membershipTaskManager.createGetMemberItemMembershipTask(actor, {
       item,
-      validatePermission: 'admin' as PermissionLevel,
+      validatePermission: PermissionLevel.Admin,
     });
     t2.getInput = () => {
       t2.skip = !Boolean(t1.result.filter(({ tagId }) => tagId === hiddenTagId).length);
