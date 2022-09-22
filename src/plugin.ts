@@ -1,9 +1,9 @@
-import { FastifyLoggerInstance, FastifyPluginAsync } from 'fastify';
+import { FastifyPluginAsync } from 'fastify';
 
-import { Actor, Item, Member, PermissionLevel } from '@graasp/sdk';
-import { ItemTagService, ItemTagTaskManager } from 'graasp-item-tags';
+import { Actor, Item } from '@graasp/sdk';
+import { ItemTagService } from 'graasp-item-tags';
 
-import { isGraaspError } from './utils';
+import { CannotGetHiddenItemError, isGraaspError } from './utils';
 
 export interface GraaspHiddenOptions {
   hiddenTagId: string;
@@ -11,44 +11,40 @@ export interface GraaspHiddenOptions {
 
 const plugin: FastifyPluginAsync<GraaspHiddenOptions> = async (fastify, options) => {
   const {
-    items: { dbService: iS, taskManager: itemTaskManager },
-    itemMemberships: { dbService: iMS, taskManager: membershipTaskManager },
+    items: { taskManager: itemTaskManager },
+    itemMemberships: { dbService: iMS },
     taskRunner: runner,
+    db,
   } = fastify;
 
   const { hiddenTagId } = options;
 
   const iTS = new ItemTagService();
-  const taskManager = new ItemTagTaskManager(iS, iMS, iTS, itemTaskManager);
 
-  // Hide the item for all users that don't have at least admin permission over it
-  const isItemHidden = async (item: Item, actor: Actor, log: FastifyLoggerInstance) => {
-    const t1 = taskManager.createGetOfItemTask(actor as Member, item);
-    const t2 = membershipTaskManager.createGetMemberItemMembershipTask(actor, {
-      item,
-      validatePermission: PermissionLevel.Admin,
-    });
-    t2.getInput = () => {
-      t2.skip = !Boolean(t1.result.filter(({ tagId }) => tagId === hiddenTagId).length);
-    };
-
-    await runner.runSingleSequence([t1, t2], log);
+  // Hide items for all users that don't have at least admin permission over it
+  // avoid using tasks in hooks
+  const isItemHidden = async (item: Item, actor: Actor) => {
+    const isHidden = await iTS.hasTag(item, hiddenTagId, db.pool);
+    let canAdmin = true;
+    if (isHidden) {
+      canAdmin = await iMS.canAdmin(actor.id, item, db.pool);
+    }
+    if (isHidden && !canAdmin) {
+      throw new CannotGetHiddenItemError(item.id);
+    }
   };
 
-  runner.setTaskPostHookHandler<Item>(
-    itemTaskManager.getGetTaskName(),
-    async (item, actor, { log }) => {
-      await isItemHidden(item, actor, log);
-    },
-  );
+  runner.setTaskPostHookHandler<Item>(itemTaskManager.getGetTaskName(), async (item, actor) => {
+    await isItemHidden(item, actor);
+  });
 
   runner.setTaskPostHookHandler<Item[]>(
     itemTaskManager.getGetOwnTaskName(),
-    async (items, actor, { log }) => {
+    async (items, actor) => {
       const filteredItems = await Promise.all(
         items.map(async (item) => {
           try {
-            await isItemHidden(item, actor, log);
+            await isItemHidden(item, actor);
             return item;
           } catch (err) {
             if (isGraaspError(err)) {
@@ -66,11 +62,11 @@ const plugin: FastifyPluginAsync<GraaspHiddenOptions> = async (fastify, options)
 
   runner.setTaskPostHookHandler<Item[]>(
     itemTaskManager.getGetSharedWithTaskName(),
-    async (items, actor, { log }) => {
+    async (items, actor) => {
       const filteredItems = await Promise.all(
         items.map(async (item) => {
           try {
-            await isItemHidden(item, actor, log);
+            await isItemHidden(item, actor);
             return item;
           } catch (err) {
             if (isGraaspError(err)) {
@@ -88,11 +84,11 @@ const plugin: FastifyPluginAsync<GraaspHiddenOptions> = async (fastify, options)
 
   runner.setTaskPostHookHandler<Item[]>(
     itemTaskManager.getGetChildrenTaskName(),
-    async (items, actor, { log }) => {
+    async (items, actor) => {
       const filteredItems = await Promise.all(
         items.map(async (item) => {
           try {
-            await isItemHidden(item, actor, log);
+            await isItemHidden(item, actor);
             return item;
           } catch (err) {
             if (isGraaspError(err)) {

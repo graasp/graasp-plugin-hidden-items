@@ -1,22 +1,15 @@
 import { v4 } from 'uuid';
 
-import { Actor, Item } from '@graasp/sdk';
-
-import { MockGraaspError } from './mocks';
+import { Actor, Item, ItemType } from '@graasp/sdk';
 
 export const HIDDEN_ITEM_TAG_ID = 'hiddenTagId';
-export const ERROR = new MockGraaspError({
-  code: 'GR000',
-  statusCode: 500,
-  message: 'Member cannot write item',
-});
 
 export const ITEM_FILE: Item = {
   id: v4(),
   description: '',
   path: 'some_path',
   name: 'item-file',
-  type: 'file',
+  type: ItemType.LOCAL_FILE,
   extra: {
     file: {},
   },
@@ -34,7 +27,7 @@ export const ITEM_FOLDER: Item = {
   description: '',
   path: 'some_folder_path',
   name: 'item-folder',
-  type: 'folder',
+  type: ItemType.FOLDER,
   extra: {},
   creator: 'creator-id',
   createdAt: 'somedata',
@@ -56,7 +49,7 @@ export const ITEMS: Item[] = [
     description: '',
     path: 'some_folder_path_1',
     name: 'item-folder',
-    type: 'folder',
+    type: ItemType.FOLDER,
     extra: {},
     creator: 'creator-id',
     createdAt: 'somedata',
@@ -71,7 +64,7 @@ export const ITEMS: Item[] = [
     description: '',
     path: 'some_folder_path_2',
     name: 'item-folder',
-    type: 'folder',
+    type: ItemType.FOLDER,
     extra: {},
     creator: 'creator-id',
     createdAt: 'somedata',
