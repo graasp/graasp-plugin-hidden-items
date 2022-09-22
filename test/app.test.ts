@@ -146,7 +146,7 @@ describe('test', () => {
       });
     });
 
-    it('Item with tag and less than admin should fail', async () => {
+    it('Item with tag and less than admin should return no item', async () => {
       const items = [ITEM_FOLDER, ITEM_FILE];
       mockCreateGetOfItemTask([{ tagId: HIDDEN_ITEM_TAG_ID, itemPath: ITEM_FILE.path }]);
       mockCreateGetMemberItemMembershipTask({});
