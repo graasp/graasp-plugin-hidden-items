@@ -34,7 +34,7 @@ describe('test', () => {
     jest.spyOn(runner, 'setTaskPreHookHandler').mockImplementation(async () => false);
   });
 
-  describe('getGetTaskName setTaskPostHookHandler', () => {
+  describe('getGetTaskName PostHook', () => {
     it('Item without tag should success', async () => {
       const item = ITEM_FILE;
 
@@ -156,6 +156,28 @@ describe('test', () => {
           mockIsItemHiddenFn({ hasTag: true, canAdmin: false });
           expect(await fn(items, actor, { log: MOCK_LOGGER })).resolves;
           expect([]).toEqual(items);
+        }
+      });
+
+      await build({
+        itemTaskManager,
+        runner,
+        itemMembershipService,
+        itemMembershipTaskManager,
+        options: { hiddenTagId: HIDDEN_ITEM_TAG_ID },
+      });
+    });
+
+    it('Empty items should continue', async () => {
+      const items = [];
+      mockCreateGetOfItemTask([]);
+      mockCreateGetMemberItemMembershipTask({});
+
+      jest.spyOn(runner, 'setTaskPostHookHandler').mockImplementation(async (name, fn) => {
+        if (name === itemTaskManager.getGetOwnTaskName()) {
+          mockIsItemHiddenFn({ hasTag: false, canAdmin: true });
+          expect(await fn(items, actor, { log: MOCK_LOGGER })).resolves;
+          expect(items).toEqual([]);
         }
       });
 

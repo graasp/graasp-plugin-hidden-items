@@ -39,6 +39,10 @@ const plugin: FastifyPluginAsync<GraaspHiddenOptions> = async (fastify, options)
   };
 
   const removeHiddenItems = async (items, actor) => {
+    if (!items || !items.length) {
+      return;
+    }
+
     // chunk items to run at maximum MAX_NB_TASKS_IN_PARALLEL
     const chunkedItems = spliceIntoChunks<Item>(
       items,
