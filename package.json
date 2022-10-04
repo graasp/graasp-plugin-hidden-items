@@ -40,7 +40,7 @@
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "fastify": "^3.29.1",
-    "graasp-test": "github:graasp/graasp-test#25-item-type",
+    "graasp-test": "github:graasp/graasp-test",
     "husky": "7.0.4",
     "jest": "27.4.5",
     "prettier": "2.5.1",
