@@ -1,6 +1,6 @@
 import { FastifyLoggerInstance } from 'fastify';
 
-import { ItemMembershipService } from '@graasp/sdk';
+import { DatabaseTransactionHandler, ItemMembershipService } from '@graasp/sdk';
 import { ItemTagService } from 'graasp-item-tags';
 import { ItemMembershipTaskManager, ItemTaskManager, TaskRunner } from 'graasp-test';
 
@@ -17,6 +17,7 @@ const itemMembershipService = {
 const runner = new TaskRunner();
 const actor = GRAASP_ACTOR;
 const MOCK_LOGGER = {} as unknown as FastifyLoggerInstance;
+const MOCK_HANDLER = {} as unknown as DatabaseTransactionHandler;
 
 const mockIsItemHiddenFn = ({ hasTag, canAdmin }) => {
   jest.spyOn(ItemTagService.prototype, 'hasTag').mockImplementation(async () => {
@@ -41,7 +42,7 @@ describe('test', () => {
       jest.spyOn(runner, 'setTaskPostHookHandler').mockImplementation(async (name, fn) => {
         if (name === itemTaskManager.getGetTaskName()) {
           mockIsItemHiddenFn({ hasTag: false, canAdmin: true });
-          expect(await fn(item, actor, { log: MOCK_LOGGER })).resolves;
+          expect(await fn(item, actor, { log: MOCK_LOGGER, handler: MOCK_HANDLER })).resolves;
         }
       });
 
@@ -62,7 +63,7 @@ describe('test', () => {
       jest.spyOn(runner, 'setTaskPostHookHandler').mockImplementation(async (name, fn) => {
         if (name === itemTaskManager.getGetTaskName()) {
           mockIsItemHiddenFn({ hasTag: true, canAdmin: true });
-          expect(await fn(item, actor, { log: MOCK_LOGGER })).resolves;
+          expect(await fn(item, actor, { log: MOCK_LOGGER, handler: MOCK_HANDLER })).resolves;
         }
       });
 
@@ -84,7 +85,7 @@ describe('test', () => {
         if (name === itemTaskManager.getGetTaskName()) {
           mockIsItemHiddenFn({ hasTag: true, canAdmin: false });
 
-          expect(fn(item, actor, { log: MOCK_LOGGER })).rejects.toEqual(
+          expect(fn(item, actor, { log: MOCK_LOGGER, handler: MOCK_HANDLER })).rejects.toEqual(
             new CannotGetHiddenItemError(ITEM_FILE.id),
           );
         }
@@ -109,7 +110,7 @@ describe('test', () => {
       jest.spyOn(runner, 'setTaskPostHookHandler').mockImplementation(async (name, fn) => {
         if (name === itemTaskManager.getGetOwnTaskName()) {
           mockIsItemHiddenFn({ hasTag: false, canAdmin: true });
-          expect(await fn(items, actor, { log: MOCK_LOGGER })).resolves;
+          expect(await fn(items, actor, { log: MOCK_LOGGER, handler: MOCK_HANDLER })).resolves;
           expect(items).toEqual([ITEM_FOLDER, ITEM_FILE]);
         }
       });
@@ -131,7 +132,7 @@ describe('test', () => {
       jest.spyOn(runner, 'setTaskPostHookHandler').mockImplementation(async (name, fn) => {
         if (name === itemTaskManager.getGetOwnTaskName()) {
           mockIsItemHiddenFn({ hasTag: true, canAdmin: true });
-          expect(await fn(items, actor, { log: MOCK_LOGGER })).resolves;
+          expect(await fn(items, actor, { log: MOCK_LOGGER, handler: MOCK_HANDLER })).resolves;
           expect(items).toEqual([ITEM_FOLDER, ITEM_FILE]);
           done();
         }
@@ -154,7 +155,7 @@ describe('test', () => {
       jest.spyOn(runner, 'setTaskPostHookHandler').mockImplementation(async (name, fn) => {
         if (name === itemTaskManager.getGetOwnTaskName()) {
           mockIsItemHiddenFn({ hasTag: true, canAdmin: false });
-          expect(await fn(items, actor, { log: MOCK_LOGGER })).resolves;
+          expect(await fn(items, actor, { log: MOCK_LOGGER, handler: MOCK_HANDLER })).resolves;
           expect([]).toEqual(items);
         }
       });
@@ -176,7 +177,7 @@ describe('test', () => {
       jest.spyOn(runner, 'setTaskPostHookHandler').mockImplementation(async (name, fn) => {
         if (name === itemTaskManager.getGetOwnTaskName()) {
           mockIsItemHiddenFn({ hasTag: false, canAdmin: true });
-          expect(await fn(items, actor, { log: MOCK_LOGGER })).resolves;
+          expect(await fn(items, actor, { log: MOCK_LOGGER, handler: MOCK_HANDLER })).resolves;
           expect(items).toEqual([]);
         }
       });
@@ -200,7 +201,7 @@ describe('test', () => {
       jest.spyOn(runner, 'setTaskPostHookHandler').mockImplementation(async (name, fn) => {
         if (name === itemTaskManager.getGetSharedWithTaskName()) {
           mockIsItemHiddenFn({ hasTag: false, canAdmin: false });
-          expect(await fn(items, actor, { log: MOCK_LOGGER })).resolves;
+          expect(await fn(items, actor, { log: MOCK_LOGGER, handler: MOCK_HANDLER })).resolves;
           expect(items).toEqual([ITEM_FOLDER, ITEM_FILE]);
         }
       });
@@ -222,7 +223,7 @@ describe('test', () => {
       jest.spyOn(runner, 'setTaskPostHookHandler').mockImplementation(async (name, fn) => {
         if (name === itemTaskManager.getGetSharedWithTaskName()) {
           mockIsItemHiddenFn({ hasTag: true, canAdmin: true });
-          expect(await fn(items, actor, { log: MOCK_LOGGER })).resolves;
+          expect(await fn(items, actor, { log: MOCK_LOGGER, handler: MOCK_HANDLER })).resolves;
           expect(items).toEqual([ITEM_FOLDER, ITEM_FILE]);
         }
       });
@@ -244,7 +245,7 @@ describe('test', () => {
       jest.spyOn(runner, 'setTaskPostHookHandler').mockImplementation(async (name, fn) => {
         if (name === itemTaskManager.getGetSharedWithTaskName()) {
           mockIsItemHiddenFn({ hasTag: true, canAdmin: false });
-          expect(await fn(items, actor, { log: MOCK_LOGGER })).resolves;
+          expect(await fn(items, actor, { log: MOCK_LOGGER, handler: MOCK_HANDLER })).resolves;
           expect(items).toEqual([]);
         }
       });
@@ -268,7 +269,7 @@ describe('test', () => {
       jest.spyOn(runner, 'setTaskPostHookHandler').mockImplementation(async (name, fn) => {
         if (name === itemTaskManager.getGetChildrenTaskName()) {
           mockIsItemHiddenFn({ hasTag: false, canAdmin: false });
-          expect(await fn(items, actor, { log: MOCK_LOGGER })).resolves;
+          expect(await fn(items, actor, { log: MOCK_LOGGER, handler: MOCK_HANDLER })).resolves;
           expect(items).toEqual([ITEM_FOLDER, ITEM_FILE]);
         }
       });
@@ -290,7 +291,7 @@ describe('test', () => {
       jest.spyOn(runner, 'setTaskPostHookHandler').mockImplementation(async (name, fn) => {
         if (name === itemTaskManager.getGetChildrenTaskName()) {
           mockIsItemHiddenFn({ hasTag: true, canAdmin: true });
-          expect(await fn(items, actor, { log: MOCK_LOGGER })).resolves;
+          expect(await fn(items, actor, { log: MOCK_LOGGER, handler: MOCK_HANDLER })).resolves;
           expect(items).toEqual([ITEM_FOLDER, ITEM_FILE]);
         }
       });
@@ -312,7 +313,7 @@ describe('test', () => {
       jest.spyOn(runner, 'setTaskPostHookHandler').mockImplementation(async (name, fn) => {
         if (name === itemTaskManager.getGetChildrenTaskName()) {
           mockIsItemHiddenFn({ hasTag: true, canAdmin: false });
-          expect(await fn(items, actor, { log: MOCK_LOGGER })).resolves;
+          expect(await fn(items, actor, { log: MOCK_LOGGER, handler: MOCK_HANDLER })).resolves;
           expect(items).toEqual([]);
         }
       });
