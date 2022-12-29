@@ -16,7 +16,6 @@ const plugin: FastifyPluginAsync<GraaspHiddenOptions> = async (fastify, options)
     items: { taskManager: itemTaskManager },
     itemMemberships: { dbService: iMS },
     taskRunner: runner,
-    db,
   } = fastify;
 
   const { hiddenTagId } = options;
@@ -27,18 +26,18 @@ const plugin: FastifyPluginAsync<GraaspHiddenOptions> = async (fastify, options)
   // in parallel of a maximum of MAX_NB_TASKS_IN_PARALLEL parallel queries
   // avoid using tasks in hooks
   // difficult to run one query for all items because hasTag and canAdmin don't have many-calls
-  const isItemHidden = async (item: Item, actor: Actor) => {
-    const isHidden = await iTS.hasTag(item, hiddenTagId, db.pool);
+  const isItemHidden = async (item: Item, actor: Actor, handler) => {
+    const isHidden = await iTS.hasTag(item, hiddenTagId, handler);
     let canAdmin = true;
     if (isHidden) {
-      canAdmin = await iMS.canAdmin(actor.id, item, db.pool);
+      canAdmin = await iMS.canAdmin(actor.id, item, handler);
     }
     if (isHidden && !canAdmin) {
       throw new CannotGetHiddenItemError(item.id);
     }
   };
 
-  const removeHiddenItems = async (items, actor) => {
+  const removeHiddenItems = async (items, actor, handler) => {
     if (!items || !items.length) {
       return;
     }
@@ -57,7 +56,7 @@ const plugin: FastifyPluginAsync<GraaspHiddenOptions> = async (fastify, options)
             const result = [];
             for (const i of chunkedItems) {
               try {
-                await isItemHidden(i, actor);
+                await isItemHidden(i, actor, handler);
                 result.push(i);
               } catch (err) {
                 if (!isGraaspError(err)) {
@@ -75,28 +74,28 @@ const plugin: FastifyPluginAsync<GraaspHiddenOptions> = async (fastify, options)
     items.splice(0, items.length, ...filteredItems.filter(Boolean));
   };
 
-  runner.setTaskPostHookHandler<Item>(itemTaskManager.getGetTaskName(), async (item, actor) => {
-    await isItemHidden(item, actor);
+  runner.setTaskPostHookHandler<Item>(itemTaskManager.getGetTaskName(), async (item, actor, { handler }) => {
+    await isItemHidden(item, actor, handler);
   });
 
   runner.setTaskPostHookHandler<Item[]>(
     itemTaskManager.getGetOwnTaskName(),
-    async (items, actor) => {
-      await removeHiddenItems(items, actor);
+    async (items, actor, { handler }) => {
+      await removeHiddenItems(items, actor, handler);
     },
   );
 
   runner.setTaskPostHookHandler<Item[]>(
     itemTaskManager.getGetSharedWithTaskName(),
-    async (items, actor) => {
-      await removeHiddenItems(items, actor);
+    async (items, actor, { handler }) => {
+      await removeHiddenItems(items, actor, handler);
     },
   );
 
   runner.setTaskPostHookHandler<Item[]>(
     itemTaskManager.getGetChildrenTaskName(),
-    async (items, actor) => {
-      await removeHiddenItems(items, actor);
+    async (items, actor, { handler }) => {
+      await removeHiddenItems(items, actor, handler);
     },
   );
 };
